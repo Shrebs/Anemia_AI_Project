@@ -196,9 +196,17 @@ def diet_recommendation(severity):
 
         return """
         • Spinach
+        
+        
         • Beetroot
+        
+        
         • Dates
+        
+        
         • Lentils
+        
+        
         • Pomegranate
         """
 
@@ -206,9 +214,17 @@ def diet_recommendation(severity):
 
         return """
         • Iron-rich foods
+        
+        
         • Green leafy vegetables
+        
+        
         • Eggs
+        
+        
         • Beans
+        
+        
         • Citrus fruits
         """
 
@@ -216,8 +232,14 @@ def diet_recommendation(severity):
 
         return """
         • Immediate medical consultation recommended
+        
+        
         • Iron supplements (doctor advised)
+        
+        
         • Nutrient-rich diet
+        
+        
         • Protein-rich foods
         """
 
@@ -225,155 +247,179 @@ def diet_recommendation(severity):
 
         return """
         • Maintain balanced healthy diet
+        
+        
         • Regular hydration
+        
+        
         • Nutritious meals
         """
     
 
 # -------------------------------------------------
-# APP TITLE
+# SIDEBAR
 # -------------------------------------------------
 
-st.title("AI-Based Anemia Detection System")
+st.sidebar.title("Clinical Anemia Assessment System")
 
-st.write("Enter blood parameter values below:")
-
-
-# -------------------------------------------------
-# USER INPUTS
-# -------------------------------------------------
-
-gender_option = st.selectbox(
-    "Select Gender",
-    ["Female", "Male"]
+mode = st.sidebar.radio(
+    "Select Analysis Mode",
+    ["Blood Report Analysis", "Symptom Checker"]
 )
 
-# Convert gender into ML encoding
-if gender_option == "Female":
-    gender = 0
-else:
-    gender = 1
-
-
-hemoglobin = st.number_input("Enter Hemoglobin Value")
-
-rbc = st.number_input("Enter RBC Count")
-
-mcv = st.number_input("Enter MCV Value")
-
-mch = st.number_input("Enter MCH Value")
-
-mchc = st.number_input("Enter MCHC Value")
-
-rdw = st.number_input("Enter RDW Value")
-
 
 # -------------------------------------------------
-# SUBMIT BUTTON
+# MAIN TITLE
 # -------------------------------------------------
 
-if st.button("Analyze Report"):
+st.title("Clinical Anemia Assessment Dashboard")
 
-    # Prepare data for ML model
-    input_data = np.array([[gender, hemoglobin, mch, mchc, mcv]])
+st.markdown("---")
 
-    # AI Prediction
-    prediction = model.predict(input_data)
-    
-    # Severity Analysis
-    severity = anemia_severity(hemoglobin, gender)
 
-    
-
-    # Parameter Analysis
-    hb_status = check_hemoglobin(hemoglobin, gender)
-
-    rbc_status = check_rbc(rbc, gender)
-
-    mcv_status = check_mcv(mcv)
-
-    mch_status = check_mch(mch)
-
-    mchc_status = check_mchc(mchc)
-
-    rdw_status = check_rdw(rdw)
-
-    
-    # -------------------------------------------------
-    # DISPLAY RESULTS
-    # -------------------------------------------------
-
-    st.subheader("Blood Parameter Analysis")
-
-    st.write("Hemoglobin Status:", hb_status)
-
-    st.write("RBC Status:", rbc_status)
-
-    st.write("MCV Status:", mcv_status)
-
-    st.write("MCH Status:", mch_status)
-
-    st.write("MCHC Status:", mchc_status)
-
-    st.write("RDW Status:", rdw_status)
-
+if mode == "Blood Report Analysis":
 
     # -------------------------------------------------
-    # AI PREDICTION RESULT
+    # USER INPUTS
     # -------------------------------------------------
 
-    st.subheader("AI Prediction")
+    gender_option = st.selectbox(
+        "Select Gender",
+        ["Female", "Male"]
+    )
 
-    if prediction[0] == 1:
-        st.error("Anemia Detected")
-
+    # Convert gender into ML encoding
+    if gender_option == "Female":
+        gender = 0
     else:
-        st.success("No Anemia Detected")
-        
-        
+        gender = 1
+
+
+    st.subheader("Blood Test Parameters")
+
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        hemoglobin = st.number_input("Hemoglobin")
+
+        mch = st.number_input("MCH")
+
+    with col2:
+        rbc = st.number_input("RBC Count")
+
+        mchc = st.number_input("MCHC")
+
+    with col3:
+        mcv = st.number_input("MCV")
+
+        rdw = st.number_input("RDW")
+
+
     # -------------------------------------------------
-    # SEVERITY LEVEL
-    # -------------------------------------------------
-
-    st.subheader("Severity Level")
-
-    if severity == "No Anemia":
-        st.success(severity)
-
-    elif severity == "Mild Anemia":
-        st.warning(severity)
-
-    elif severity == "Moderate Anemia":
-        st.warning(severity)
-
-    else:
-        st.error(severity)
-        
-        
-      # -------------------------------------------------
-    # POSSIBLE CAUSE
-    # -------------------------------------------------
-    
-    # Possible Cause Analysis
-    cause = possible_cause(mcv)
-    
-    st.subheader("Possible Cause")
-
-    st.info(cause)   
-    
-    
-    
-    
-    # -------------------------------------------------
-    # DIET RECOMMENDATION
+    # SUBMIT BUTTON
     # -------------------------------------------------
 
-    # Diet Recommendation
-    diet = diet_recommendation(severity)
-    
-    st.subheader("Suggested Diet")
+    if st.button("Analyze Report"):
 
-    st.success(diet)
+        # Prepare data for ML model
+        input_data = np.array([[gender, hemoglobin, mch, mchc, mcv]])
+
+        # AI Prediction
+        prediction = model.predict(input_data)
+
+        # Severity Analysis
+        severity = anemia_severity(hemoglobin, gender)
+
+        # Possible Cause Analysis
+        cause = possible_cause(mcv)
+
+        # Diet Recommendation
+        diet = diet_recommendation(severity)
+
+        # Parameter Analysis
+        hb_status = check_hemoglobin(hemoglobin, gender)
+
+        rbc_status = check_rbc(rbc, gender)
+
+        mcv_status = check_mcv(mcv)
+
+        mch_status = check_mch(mch)
+
+        mchc_status = check_mchc(mchc)
+
+        rdw_status = check_rdw(rdw)
+
+
+        # -------------------------------------------------
+        # DISPLAY RESULTS
+        # -------------------------------------------------
+
+        st.subheader("Blood Parameter Analysis")
+
+        st.write("Hemoglobin Status:", hb_status)
+
+        st.write("RBC Status:", rbc_status)
+
+        st.write("MCV Status:", mcv_status)
+
+        st.write("MCH Status:", mch_status)
+
+        st.write("MCHC Status:", mchc_status)
+
+        st.write("RDW Status:", rdw_status)
+
+
+                      # -------------------------------------------------
+        # CLINICAL SUMMARY
+        # -------------------------------------------------
+
+        st.subheader("Clinical Summary")
+
+        row1_col1, row1_col2 = st.columns(2)
+
+        with row1_col1:
+            with st.container(border=True):
+
+                st.markdown("### AI Prediction")
+
+                if prediction[0] == 1:
+                    st.error("Anemia Detected")
+                else:
+                    st.success("No Anemia Detected")
+
+        with row1_col2:
+            with st.container(border=True):
+
+                st.markdown("### Severity Level")
+
+                if severity == "No Anemia":
+                    st.success(severity)
+
+                elif severity == "Mild Anemia":
+                    st.warning(severity)
+
+                elif severity == "Moderate Anemia":
+                    st.warning(severity)
+
+                else:
+                    st.error(severity)
+
+
+        row2_col1, row2_col2 = st.columns(2)
+
+        with row2_col1:
+            with st.container(border=True):
+
+                st.markdown("### Possible Cause")
+
+                st.info(cause)
+
+        with row2_col2:
+            with st.container(border=True):
+
+                st.markdown("### Diet Recommendation")
+
+                st.markdown(diet)
         
         
     
