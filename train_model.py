@@ -106,3 +106,15 @@ plt.xlabel("Features")
 plt.ylabel("Importance")
 
 plt.show()
+
+
+
+# =========================================================
+# SAVE MODEL
+# ========================================================= #
+
+import pickle
+
+pickle.dump(rf_model, open("models/anemia_model.pkl", "wb"))
+
+print("Model saved successfully!")
