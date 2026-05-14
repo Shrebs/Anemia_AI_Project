@@ -282,6 +282,13 @@ if mode == "Blood Report Analysis":
     # -------------------------------------------------
     # USER INPUTS
     # -------------------------------------------------
+    
+    age = st.number_input(
+    "Age",
+    min_value=1,
+    max_value=120,
+    step=1
+)
 
     gender_option = st.selectbox(
         "Select Gender",
@@ -422,4 +429,172 @@ if mode == "Blood Report Analysis":
                 st.markdown(diet)
         
         
-    
+        
+        
+        
+        
+        
+        
+# =========================================================
+# SYMPTOM CHECKER MODE
+# =========================================================
+
+elif mode == "Symptom Checker":
+
+    st.subheader("Symptom-Based Anemia Risk Assessment")
+
+    st.write("Select symptoms experienced by the user:")
+
+    age = st.number_input(
+        "Age",
+        min_value=1,
+        max_value=120,
+        step=1
+    )
+
+
+    # -------------------------------------------------
+    # SYMPTOM INPUTS
+    # -------------------------------------------------
+
+    st.subheader("Select Symptoms")
+
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+
+        fatigue = st.checkbox("Fatigue")
+
+        weakness = st.checkbox("Weakness")
+
+        dizziness = st.checkbox("Dizziness")
+
+        headache = st.checkbox("Headache")
+
+        pale_skin = st.checkbox("Pale Skin")
+
+
+    with col2:
+
+        short_breath = st.checkbox("Shortness of Breath")
+
+        rapid_heartbeat = st.checkbox("Rapid Heartbeat")
+
+        cold_hands = st.checkbox("Cold Hands / Feet")
+
+        chest_pain = st.checkbox("Chest Discomfort")
+
+        fainting = st.checkbox("Fainting Sensation")
+
+
+    with col3:
+
+        hair_fall = st.checkbox("Hair Fall")
+
+        brittle_nails = st.checkbox("Brittle Nails")
+
+        poor_concentration = st.checkbox("Difficulty Concentrating")
+
+        tingling = st.checkbox("Tingling Hands / Feet")
+
+        craving_ice = st.checkbox("Craving Ice")
+
+
+    # -------------------------------------------------
+    # ANALYZE BUTTON
+    # -------------------------------------------------
+
+    if st.button("Analyze Symptoms"):
+
+
+        # -------------------------------------------------
+        # SYMPTOM SCORE
+        # -------------------------------------------------
+
+        symptom_score = sum([
+            fatigue,
+            weakness,
+            dizziness,
+            headache,
+            pale_skin,
+            short_breath,
+            rapid_heartbeat,
+            cold_hands,
+            chest_pain,
+            fainting,
+            hair_fall,
+            brittle_nails,
+            poor_concentration,
+            tingling,
+            craving_ice
+        ])
+
+
+        # -------------------------------------------------
+        # RISK ANALYSIS
+        # -------------------------------------------------
+
+        if symptom_score >= 11:
+
+            risk = "High Possible Anemia Risk"
+
+            severity = "Possible Severe Condition"
+
+        elif symptom_score >= 6:
+
+            risk = "Moderate Possible Anemia Risk"
+
+            severity = "Possible Moderate Condition"
+
+        elif symptom_score >= 2:
+
+            risk = "Low Possible Anemia Risk"
+
+            severity = "Possible Mild Condition"
+
+        else:
+
+            risk = "Minimal Anemia Risk"
+
+            severity = "No Significant Symptoms Reported"
+
+
+        # -------------------------------------------------
+        # DISPLAY RESULTS
+        # -------------------------------------------------
+
+        st.subheader("Clinical Summary")
+
+
+        # ---------------- TOP SUMMARY CARDS ---------------- #
+
+        summary_col1, summary_col2 = st.columns(2)
+
+        with summary_col1:
+
+            with st.container(border=True):
+
+                st.markdown("### Risk Assessment")
+
+                st.warning(risk)
+
+
+        with summary_col2:
+
+            with st.container(border=True):
+
+                st.markdown("### Severity Interpretation")
+
+                st.info(severity)
+
+
+        # ---------------- FULL WIDTH WARNING ---------------- #
+
+        with st.container(border=True):
+
+            st.markdown("### Medical Advisory")
+
+            st.warning(
+                "⚠️ This symptom-based analysis is not a medical diagnosis. "
+                "Please consult a healthcare professional and undergo proper blood testing for accurate evaluation."
+            )
