@@ -1,5 +1,9 @@
 import streamlit as st
+import pickle
+import numpy as np
 
+# Load trained model
+model = pickle.load(open("models/anemia_model.pkl", "rb"))
 
 # -------------------------------------------------
 # HEMOGLOBIN FUNCTION
@@ -171,6 +175,12 @@ rdw = st.number_input("Enter RDW Value")
 
 if st.button("Analyze Report"):
 
+    # Prepare data for ML model
+    input_data = np.array([[gender, hemoglobin, mch, mchc, mcv]])
+
+    # AI Prediction
+    prediction = model.predict(input_data)
+
     # Parameter Analysis
     hb_status = check_hemoglobin(hemoglobin, gender)
 
@@ -202,3 +212,16 @@ if st.button("Analyze Report"):
     st.write("MCHC Status:", mchc_status)
 
     st.write("RDW Status:", rdw_status)
+
+
+    # -------------------------------------------------
+    # AI PREDICTION RESULT
+    # -------------------------------------------------
+
+    st.subheader("AI Prediction")
+
+    if prediction[0] == 1:
+        st.error("Anemia Detected")
+
+    else:
+        st.success("No Anemia Detected")
