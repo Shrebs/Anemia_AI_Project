@@ -1,20 +1,202 @@
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 from io import BytesIO
+
 import streamlit as st
 import pickle
 import numpy as np
 
-# Load trained model
+
+# =========================================================
+# PAGE CONFIG
+# =========================================================
+
+st.set_page_config(
+    page_title="Clinical Anemia Assessment",
+    page_icon="🩸",
+    layout="wide"
+)
+
+
+# =========================================================
+# PROFESSIONAL CLINICAL UI
+# =========================================================
+
+st.markdown("""
+<style>
+
+/* ---------- MAIN APP ---------- */
+
+.stApp {
+    background-color: #f4f7fb;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+
+/* ---------- MAIN TITLES ---------- */
+
+h1 {
+    color: #12304a !important;
+    font-weight: 700;
+}
+
+h2, h3 {
+    color: #1c4966 !important;
+    font-weight: 600;
+}
+
+
+/* ---------- NORMAL TEXT ---------- */
+
+p, label {
+    color: #1e1e1e !important;
+}
+
+
+/* ---------- SIDEBAR ---------- */
+
+section[data-testid="stSidebar"] {
+    background-color: #12304a;
+    border-right: 2px solid #0e2233;
+}
+
+
+/* Sidebar titles/text */
+
+section[data-testid="stSidebar"] h1,
+section[data-testid="stSidebar"] h2,
+section[data-testid="stSidebar"] h3,
+section[data-testid="stSidebar"] p,
+section[data-testid="stSidebar"] label,
+section[data-testid="stSidebar"] span {
+    color: white !important;
+}
+
+
+/* ---------- BUTTONS ---------- */
+
+div.stButton > button {
+    background-color: #45b6fe !important;
+    color: white !important;
+    border-radius: 12px;
+    border: none;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    width: 100%;
+    transition: 0.3s;
+}
+
+div.stButton > button:hover {
+    background-color: #3792cb !important;
+    color: white !important;
+}
+
+/* ---------- DOWNLOAD BUTTON ---------- */
+
+div.stDownloadButton > button {
+    background-color: #45b6fe !important;
+    color: white !important;
+    border-radius: 12px;
+    border: none;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    width: 100%;
+}
+
+div.stDownloadButton > button:hover {
+    background-color: #3792cb !important;
+    color: white !important;
+}
+
+/* ---------- INPUT BOXES ---------- */
+
+.stNumberInput input {
+    background-color: white !important;
+    color: black !important;
+    border-radius: 10px !important;
+}
+
+
+/* ---------- SELECTBOX ---------- */
+
+.stSelectbox div[data-baseweb="select"] > div {
+    background-color: #12304a !important;
+    border-radius: 10px !important;
+    color: white !important;
+}
+
+
+/* Selected text */
+
+.stSelectbox span {
+    color: white !important;
+}
+
+
+/* Dropdown menu */
+
+div[data-baseweb="popover"] {
+    background-color: #12304a !important;
+    border-radius: 10px !important;
+}
+
+
+/* Dropdown options */
+
+div[role="option"] {
+    background-color: #12304a !important;
+    color: white !important;
+}
+
+
+/* Hover option */
+
+div[role="option"]:hover {
+    background-color: #1c4966 !important;
+    color: white !important;
+}
+
+
+/* ---------- CHECKBOXES ---------- */
+
+.stCheckbox label {
+    color: #1e1e1e !important;
+    font-weight: 500;
+}
+
+
+/* ---------- CONTAINERS ---------- */
+
+[data-testid="stContainer"] {
+    border-radius: 15px;
+}
+
+
+/* ---------- ALERT BOXES ---------- */
+
+.stAlert {
+    border-radius: 12px;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+
+# =========================================================
+# LOAD MODEL
+# =========================================================
+
 model = pickle.load(open("models/anemia_model.pkl", "rb"))
 
-# -------------------------------------------------
-# HEMOGLOBIN FUNCTION
-# -------------------------------------------------
+
+# =========================================================
+# FUNCTIONS
+# =========================================================
 
 def check_hemoglobin(hb, gender):
 
-    # Female
     if gender == 0:
 
         if hb < 12:
@@ -26,7 +208,6 @@ def check_hemoglobin(hb, gender):
         else:
             return "High"
 
-    # Male
     else:
 
         if hb < 13.5:
@@ -39,13 +220,8 @@ def check_hemoglobin(hb, gender):
             return "High"
 
 
-# -------------------------------------------------
-# RBC FUNCTION
-# -------------------------------------------------
-
 def check_rbc(rbc, gender):
 
-    # Female
     if gender == 0:
 
         if rbc < 4.0:
@@ -57,7 +233,6 @@ def check_rbc(rbc, gender):
         else:
             return "High"
 
-    # Male
     else:
 
         if rbc < 4.5:
@@ -69,10 +244,6 @@ def check_rbc(rbc, gender):
         else:
             return "High"
 
-
-# -------------------------------------------------
-# MCV FUNCTION
-# -------------------------------------------------
 
 def check_mcv(mcv):
 
@@ -86,10 +257,6 @@ def check_mcv(mcv):
         return "High"
 
 
-# -------------------------------------------------
-# MCH FUNCTION
-# -------------------------------------------------
-
 def check_mch(mch):
 
     if mch < 27:
@@ -101,10 +268,6 @@ def check_mch(mch):
     else:
         return "High"
 
-
-# -------------------------------------------------
-# MCHC FUNCTION
-# -------------------------------------------------
 
 def check_mchc(mchc):
 
@@ -118,10 +281,6 @@ def check_mchc(mchc):
         return "High"
 
 
-# -------------------------------------------------
-# RDW FUNCTION
-# -------------------------------------------------
-
 def check_rdw(rdw):
 
     if rdw < 11.5:
@@ -133,13 +292,9 @@ def check_rdw(rdw):
     else:
         return "High"
 
-# -------------------------------------------------
-# ANEMIA SEVERITY FUNCTION
-# -------------------------------------------------
 
 def anemia_severity(hb, gender):
 
-    # Female
     if gender == 0:
 
         if hb >= 12:
@@ -154,7 +309,6 @@ def anemia_severity(hb, gender):
         else:
             return "Severe Anemia"
 
-    # Male
     else:
 
         if hb >= 13.5:
@@ -168,14 +322,7 @@ def anemia_severity(hb, gender):
 
         else:
             return "Severe Anemia"
-        
-        
-        
-        
-        
-# -------------------------------------------------
-# POSSIBLE CAUSE FUNCTION
-# -------------------------------------------------
+
 
 def possible_cause(mcv):
 
@@ -187,82 +334,60 @@ def possible_cause(mcv):
 
     else:
         return "Requires Further Clinical Evaluation"
-    
-    
-# -------------------------------------------------
-# DIET RECOMMENDATION FUNCTION
-# -------------------------------------------------
+
 
 def diet_recommendation(severity):
 
     if severity == "Mild Anemia":
 
         return """
-        • Spinach
-        
-        
-        • Beetroot
-        
-        
-        • Dates
-        
-        
-        • Lentils
-        
-        
-        • Pomegranate
-        """
+• Spinach
+
+• Beetroot
+
+• Dates
+
+• Lentils
+
+• Pomegranate
+"""
 
     elif severity == "Moderate Anemia":
 
         return """
-        • Iron-rich foods
-        
-        
-        • Green leafy vegetables
-        
-        
-        • Eggs
-        
-        
-        • Beans
-        
-        
-        • Citrus fruits
-        """
+• Iron-rich foods
+
+• Green leafy vegetables
+
+• Eggs
+
+• Beans
+
+• Citrus fruits
+"""
 
     elif severity == "Severe Anemia":
 
         return """
-        • Immediate medical consultation recommended
-        
-        
-        • Iron supplements (doctor advised)
-        
-        
-        • Nutrient-rich diet
-        
-        
-        • Protein-rich foods
-        """
+• Immediate medical consultation recommended
+
+• Iron supplements (doctor advised)
+
+• Nutrient-rich diet
+
+• Protein-rich foods
+"""
 
     else:
 
         return """
-        • Maintain balanced healthy diet
-        
-        
-        • Regular hydration
-        
-        
-        • Nutritious meals
-        """
-    
-    
-    
-    # -------------------------------------------------
-# PDF REPORT FUNCTION
-# -------------------------------------------------
+• Maintain balanced healthy diet
+
+• Regular hydration
+
+• Nutritious meals
+"""
+
 
 def generate_pdf(prediction_text, severity, cause, diet):
 
@@ -274,7 +399,6 @@ def generate_pdf(prediction_text, severity, cause, diet):
 
     elements = []
 
-
     title = Paragraph(
         "Clinical Anemia Assessment Report",
         styles['Title']
@@ -284,32 +408,39 @@ def generate_pdf(prediction_text, severity, cause, diet):
 
     elements.append(Spacer(1, 12))
 
-
     elements.append(
-        Paragraph(f"<b>AI Prediction:</b> {prediction_text}", styles['BodyText'])
+        Paragraph(
+            f"<b>AI Prediction:</b> {prediction_text}",
+            styles['BodyText']
+        )
     )
 
     elements.append(Spacer(1, 10))
 
-
     elements.append(
-        Paragraph(f"<b>Severity Level:</b> {severity}", styles['BodyText'])
+        Paragraph(
+            f"<b>Severity Level:</b> {severity}",
+            styles['BodyText']
+        )
     )
 
     elements.append(Spacer(1, 10))
 
-
     elements.append(
-        Paragraph(f"<b>Possible Cause:</b> {cause}", styles['BodyText'])
+        Paragraph(
+            f"<b>Possible Cause:</b> {cause}",
+            styles['BodyText']
+        )
     )
 
     elements.append(Spacer(1, 10))
 
-
     elements.append(
-        Paragraph(f"<b>Diet Recommendation:</b><br/>{diet}", styles['BodyText'])
+        Paragraph(
+            f"<b>Diet Recommendation:</b><br/><br/>{diet.replace(chr(10), '<br/>')}",
+            styles['BodyText']
+        )
     )
-
 
     doc.build(elements)
 
@@ -317,13 +448,12 @@ def generate_pdf(prediction_text, severity, cause, diet):
 
     return buffer
 
-# -------------------------------------------------
+
+# =========================================================
 # SIDEBAR
-# -------------------------------------------------
+# =========================================================
 
-
-
-st.sidebar.title("Clinical Anemia Assessment System")
+st.sidebar.title("🩸 Clinical Anemia System")
 
 mode = st.sidebar.radio(
     "Select Analysis Mode",
@@ -331,39 +461,55 @@ mode = st.sidebar.radio(
 )
 
 
-# -------------------------------------------------
-# MAIN TITLE
-# -------------------------------------------------
+# =========================================================
+# MAIN HEADER
+# =========================================================
 
-st.title("Clinical Anemia Assessment Dashboard")
+st.markdown("""
+<h1 style='text-align:center;'>
+Clinical Anemia Assessment Dashboard
+</h1>
+""", unsafe_allow_html=True)
+
+st.markdown("""
+<p style='text-align:center; color:gray; font-size:18px;'>
+AI-Assisted Clinical Screening & Blood Report Analysis
+</p>
+""", unsafe_allow_html=True)
 
 st.markdown("---")
 
 
+# =========================================================
+# BLOOD REPORT MODE
+# =========================================================
+
 if mode == "Blood Report Analysis":
 
-    # -------------------------------------------------
-    # USER INPUTS
-    # -------------------------------------------------
-    
-    age = st.number_input(
-    "Age",
-    min_value=1,
-    max_value=120,
-    step=1
-)
+    st.subheader("Patient Information")
 
-    gender_option = st.selectbox(
-        "Select Gender",
-        ["Female", "Male"]
-    )
+    col_a, col_b = st.columns(2)
 
-    # Convert gender into ML encoding
+    with col_a:
+        age = st.number_input(
+            "Age",
+            min_value=1,
+            max_value=120,
+            step=1
+        )
+
+    with col_b:
+        gender_option = st.selectbox(
+            "Select Gender",
+            ["Female", "Male"]
+        )
+
     if gender_option == "Female":
         gender = 0
     else:
         gender = 1
 
+    st.markdown("---")
 
     st.subheader("Blood Test Parameters")
 
@@ -371,45 +517,44 @@ if mode == "Blood Report Analysis":
 
     with col1:
         hemoglobin = st.number_input("Hemoglobin")
-
         mch = st.number_input("MCH")
 
     with col2:
         rbc = st.number_input("RBC Count")
-
         mchc = st.number_input("MCHC")
 
     with col3:
         mcv = st.number_input("MCV")
-
         rdw = st.number_input("RDW")
 
-
-    # -------------------------------------------------
-    # SUBMIT BUTTON
-    # -------------------------------------------------
+    st.markdown("---")
 
     if st.button("Analyze Report"):
 
-        # Prepare data for ML model
-        input_data = np.array([[gender, hemoglobin, mch, mchc, mcv]])
+        input_data = np.array([
+            [gender, hemoglobin, mch, mchc, mcv]
+        ])
 
-        # AI Prediction
         prediction = model.predict(input_data)
 
-        # Severity Analysis
-        severity = anemia_severity(hemoglobin, gender)
+        severity = anemia_severity(
+            hemoglobin,
+            gender
+        )
 
-        # Possible Cause Analysis
         cause = possible_cause(mcv)
 
-        # Diet Recommendation
         diet = diet_recommendation(severity)
 
-        # Parameter Analysis
-        hb_status = check_hemoglobin(hemoglobin, gender)
+        hb_status = check_hemoglobin(
+            hemoglobin,
+            gender
+        )
 
-        rbc_status = check_rbc(rbc, gender)
+        rbc_status = check_rbc(
+            rbc,
+            gender
+        )
 
         mcv_status = check_mcv(mcv)
 
@@ -419,35 +564,30 @@ if mode == "Blood Report Analysis":
 
         rdw_status = check_rdw(rdw)
 
-
-        # -------------------------------------------------
-        # DISPLAY RESULTS
-        # -------------------------------------------------
-
         st.subheader("Blood Parameter Analysis")
 
-        st.write("Hemoglobin Status:", hb_status)
+        analysis_col1, analysis_col2, analysis_col3 = st.columns(3)
 
-        st.write("RBC Status:", rbc_status)
+        with analysis_col1:
+            st.info(f"Hemoglobin: {hb_status}")
+            st.info(f"RBC: {rbc_status}")
 
-        st.write("MCV Status:", mcv_status)
+        with analysis_col2:
+            st.info(f"MCV: {mcv_status}")
+            st.info(f"MCH: {mch_status}")
 
-        st.write("MCH Status:", mch_status)
+        with analysis_col3:
+            st.info(f"MCHC: {mchc_status}")
+            st.info(f"RDW: {rdw_status}")
 
-        st.write("MCHC Status:", mchc_status)
-
-        st.write("RDW Status:", rdw_status)
-
-
-                      # -------------------------------------------------
-        # CLINICAL SUMMARY
-        # -------------------------------------------------
+        st.markdown("---")
 
         st.subheader("Clinical Summary")
 
         row1_col1, row1_col2 = st.columns(2)
 
         with row1_col1:
+
             with st.container(border=True):
 
                 st.markdown("### AI Prediction")
@@ -458,6 +598,7 @@ if mode == "Blood Report Analysis":
                     st.success("No Anemia Detected")
 
         with row1_col2:
+
             with st.container(border=True):
 
                 st.markdown("### Severity Level")
@@ -474,10 +615,10 @@ if mode == "Blood Report Analysis":
                 else:
                     st.error(severity)
 
-
         row2_col1, row2_col2 = st.columns(2)
 
         with row2_col1:
+
             with st.container(border=True):
 
                 st.markdown("### Possible Cause")
@@ -485,17 +626,20 @@ if mode == "Blood Report Analysis":
                 st.info(cause)
 
         with row2_col2:
+
             with st.container(border=True):
 
                 st.markdown("### Diet Recommendation")
 
                 st.markdown(diet)
-                
-                
-                
-                        # -------------------------------------------------
-        # PDF REPORT
-        # -------------------------------------------------
+
+        st.markdown("---")
+
+        st.error(
+            "⚠️ This system is intended only for AI-assisted screening "
+            "and educational purposes. Please consult a healthcare "
+            "professional for medical diagnosis."
+        )
 
         prediction_text = (
             "Anemia Detected"
@@ -516,23 +660,15 @@ if mode == "Blood Report Analysis":
             file_name="anemia_report.pdf",
             mime="application/pdf"
         )
-        
-        
-        
-        
-        
-        
-        
-        
+
+
 # =========================================================
 # SYMPTOM CHECKER MODE
 # =========================================================
 
 elif mode == "Symptom Checker":
 
-    st.subheader("Symptom-Based Anemia Risk Assessment")
-
-    st.write("Select symptoms experienced by the user:")
+    st.subheader("Symptom-Based Risk Assessment")
 
     age = st.number_input(
         "Age",
@@ -540,11 +676,21 @@ elif mode == "Symptom Checker":
         max_value=120,
         step=1
     )
+    
+    gender_option = st.selectbox(
+          "Select Gender",
+          ["Female", "Male"],
+          key="symptom_gender"
+    )
 
-
-    # -------------------------------------------------
-    # SYMPTOM INPUTS
-    # -------------------------------------------------
+    if gender_option == "Female":
+          gender = 0
+    else:
+          gender = 1
+          
+          
+          
+    st.markdown("---")
 
     st.subheader("Select Symptoms")
 
@@ -562,7 +708,6 @@ elif mode == "Symptom Checker":
 
         pale_skin = st.checkbox("Pale Skin")
 
-
     with col2:
 
         short_breath = st.checkbox("Shortness of Breath")
@@ -574,7 +719,6 @@ elif mode == "Symptom Checker":
         chest_pain = st.checkbox("Chest Discomfort")
 
         fainting = st.checkbox("Fainting Sensation")
-
 
     with col3:
 
@@ -588,17 +732,9 @@ elif mode == "Symptom Checker":
 
         craving_ice = st.checkbox("Craving Ice")
 
-
-    # -------------------------------------------------
-    # ANALYZE BUTTON
-    # -------------------------------------------------
+    st.markdown("---")
 
     if st.button("Analyze Symptoms"):
-
-
-        # -------------------------------------------------
-        # SYMPTOM SCORE
-        # -------------------------------------------------
 
         symptom_score = sum([
             fatigue,
@@ -617,11 +753,6 @@ elif mode == "Symptom Checker":
             tingling,
             craving_ice
         ])
-
-
-        # -------------------------------------------------
-        # RISK ANALYSIS
-        # -------------------------------------------------
 
         if symptom_score >= 11:
 
@@ -647,15 +778,7 @@ elif mode == "Symptom Checker":
 
             severity = "No Significant Symptoms Reported"
 
-
-        # -------------------------------------------------
-        # DISPLAY RESULTS
-        # -------------------------------------------------
-
         st.subheader("Clinical Summary")
-
-
-        # ---------------- TOP SUMMARY CARDS ---------------- #
 
         summary_col1, summary_col2 = st.columns(2)
 
@@ -667,7 +790,6 @@ elif mode == "Symptom Checker":
 
                 st.warning(risk)
 
-
         with summary_col2:
 
             with st.container(border=True):
@@ -676,14 +798,10 @@ elif mode == "Symptom Checker":
 
                 st.info(severity)
 
+        st.markdown("---")
 
-        # ---------------- FULL WIDTH WARNING ---------------- #
-
-        with st.container(border=True):
-
-            st.markdown("### Medical Advisory")
-
-            st.warning(
-                "⚠️ This symptom-based analysis is not a medical diagnosis. "
-                "Please consult a healthcare professional and undergo proper blood testing for accurate evaluation."
-            )
+        st.error(
+            "⚠️ This symptom-based analysis is not a medical diagnosis. "
+            "Please consult a healthcare professional and undergo proper "
+            "blood testing for accurate evaluation."
+        )
