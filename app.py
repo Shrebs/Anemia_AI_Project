@@ -130,6 +130,105 @@ def check_rdw(rdw):
     else:
         return "High"
 
+# -------------------------------------------------
+# ANEMIA SEVERITY FUNCTION
+# -------------------------------------------------
+
+def anemia_severity(hb, gender):
+
+    # Female
+    if gender == 0:
+
+        if hb >= 12:
+            return "No Anemia"
+
+        elif hb >= 10:
+            return "Mild Anemia"
+
+        elif hb >= 8:
+            return "Moderate Anemia"
+
+        else:
+            return "Severe Anemia"
+
+    # Male
+    else:
+
+        if hb >= 13.5:
+            return "No Anemia"
+
+        elif hb >= 11:
+            return "Mild Anemia"
+
+        elif hb >= 8:
+            return "Moderate Anemia"
+
+        else:
+            return "Severe Anemia"
+        
+        
+        
+        
+        
+# -------------------------------------------------
+# POSSIBLE CAUSE FUNCTION
+# -------------------------------------------------
+
+def possible_cause(mcv):
+
+    if mcv < 80:
+        return "Possible Iron Deficiency Anemia"
+
+    elif mcv > 100:
+        return "Possible Vitamin B12 / Folate Deficiency"
+
+    else:
+        return "Requires Further Clinical Evaluation"
+    
+    
+# -------------------------------------------------
+# DIET RECOMMENDATION FUNCTION
+# -------------------------------------------------
+
+def diet_recommendation(severity):
+
+    if severity == "Mild Anemia":
+
+        return """
+        • Spinach
+        • Beetroot
+        • Dates
+        • Lentils
+        • Pomegranate
+        """
+
+    elif severity == "Moderate Anemia":
+
+        return """
+        • Iron-rich foods
+        • Green leafy vegetables
+        • Eggs
+        • Beans
+        • Citrus fruits
+        """
+
+    elif severity == "Severe Anemia":
+
+        return """
+        • Immediate medical consultation recommended
+        • Iron supplements (doctor advised)
+        • Nutrient-rich diet
+        • Protein-rich foods
+        """
+
+    else:
+
+        return """
+        • Maintain balanced healthy diet
+        • Regular hydration
+        • Nutritious meals
+        """
+    
 
 # -------------------------------------------------
 # APP TITLE
@@ -180,6 +279,11 @@ if st.button("Analyze Report"):
 
     # AI Prediction
     prediction = model.predict(input_data)
+    
+    # Severity Analysis
+    severity = anemia_severity(hemoglobin, gender)
+
+    
 
     # Parameter Analysis
     hb_status = check_hemoglobin(hemoglobin, gender)
@@ -225,3 +329,51 @@ if st.button("Analyze Report"):
 
     else:
         st.success("No Anemia Detected")
+        
+        
+    # -------------------------------------------------
+    # SEVERITY LEVEL
+    # -------------------------------------------------
+
+    st.subheader("Severity Level")
+
+    if severity == "No Anemia":
+        st.success(severity)
+
+    elif severity == "Mild Anemia":
+        st.warning(severity)
+
+    elif severity == "Moderate Anemia":
+        st.warning(severity)
+
+    else:
+        st.error(severity)
+        
+        
+      # -------------------------------------------------
+    # POSSIBLE CAUSE
+    # -------------------------------------------------
+    
+    # Possible Cause Analysis
+    cause = possible_cause(mcv)
+    
+    st.subheader("Possible Cause")
+
+    st.info(cause)   
+    
+    
+    
+    
+    # -------------------------------------------------
+    # DIET RECOMMENDATION
+    # -------------------------------------------------
+
+    # Diet Recommendation
+    diet = diet_recommendation(severity)
+    
+    st.subheader("Suggested Diet")
+
+    st.success(diet)
+        
+        
+    
