@@ -1,3 +1,6 @@
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
+from io import BytesIO
 import streamlit as st
 import pickle
 import numpy as np
@@ -255,10 +258,70 @@ def diet_recommendation(severity):
         • Nutritious meals
         """
     
+    
+    
+    # -------------------------------------------------
+# PDF REPORT FUNCTION
+# -------------------------------------------------
+
+def generate_pdf(prediction_text, severity, cause, diet):
+
+    buffer = BytesIO()
+
+    doc = SimpleDocTemplate(buffer)
+
+    styles = getSampleStyleSheet()
+
+    elements = []
+
+
+    title = Paragraph(
+        "Clinical Anemia Assessment Report",
+        styles['Title']
+    )
+
+    elements.append(title)
+
+    elements.append(Spacer(1, 12))
+
+
+    elements.append(
+        Paragraph(f"<b>AI Prediction:</b> {prediction_text}", styles['BodyText'])
+    )
+
+    elements.append(Spacer(1, 10))
+
+
+    elements.append(
+        Paragraph(f"<b>Severity Level:</b> {severity}", styles['BodyText'])
+    )
+
+    elements.append(Spacer(1, 10))
+
+
+    elements.append(
+        Paragraph(f"<b>Possible Cause:</b> {cause}", styles['BodyText'])
+    )
+
+    elements.append(Spacer(1, 10))
+
+
+    elements.append(
+        Paragraph(f"<b>Diet Recommendation:</b><br/>{diet}", styles['BodyText'])
+    )
+
+
+    doc.build(elements)
+
+    buffer.seek(0)
+
+    return buffer
 
 # -------------------------------------------------
 # SIDEBAR
 # -------------------------------------------------
+
+
 
 st.sidebar.title("Clinical Anemia Assessment System")
 
@@ -427,6 +490,32 @@ if mode == "Blood Report Analysis":
                 st.markdown("### Diet Recommendation")
 
                 st.markdown(diet)
+                
+                
+                
+                        # -------------------------------------------------
+        # PDF REPORT
+        # -------------------------------------------------
+
+        prediction_text = (
+            "Anemia Detected"
+            if prediction[0] == 1
+            else "No Anemia Detected"
+        )
+
+        pdf = generate_pdf(
+            prediction_text,
+            severity,
+            cause,
+            diet
+        )
+
+        st.download_button(
+            label="Download Clinical Report",
+            data=pdf,
+            file_name="anemia_report.pdf",
+            mime="application/pdf"
+        )
         
         
         
