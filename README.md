@@ -133,7 +133,7 @@ Anemia_AI_Project/
 ## 1️⃣ Clone Repository
 
 ```bash
-git clone YOUR_GITHUB_REPOSITORY_LINK
+git clone git@github.com:Shrebs/Anemia_AI_Project.git
 ```
 
 ---
@@ -212,7 +212,7 @@ Potential future upgrades include:
 
 # 👩‍💻 Author
 
-### Shreya
+### Shreya B S
 
 Data Science Engineering Student
 
