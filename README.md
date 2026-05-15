@@ -32,7 +32,10 @@ https://anemiaaiproject-62gmwd8zr7kwjdxwxf6pfr.streamlit.app/
 
 ## 🖥️ Dashboard UI
 
-<img width="100%" alt="Dashboard Screenshot" src="PASTE_IMAGE_LINK_HERE">
+<img width="100%" alt="Dashboard Screenshot" src="images/1.png">
+<img width="100%" alt="Dashboard Screenshot" src="images/2.png">
+<img width="100%" alt="Dashboard Screenshot" src="images/3.png">
+<img width="100%" alt="Dashboard Screenshot" src="images/4.png">
 
 ---
 
